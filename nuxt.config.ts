@@ -22,6 +22,7 @@ export default defineNuxtConfig({
             "script": [],
             "noscript": []
         },
-        baseURL: '/matchcat_order_page/',
+        // baseURL: '/matchcat_order_page/',
+        baseURL: '/',
     },
 })
