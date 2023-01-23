@@ -1,5 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+    ssr: false,
+    experimental: {
+        payloadExtraction: false
+    },
     modules: [
         '@element-plus/nuxt',
         '@nuxt/content',
@@ -15,10 +19,7 @@ export default defineNuxtConfig({
             "script": [],
             "noscript": []
         },
-        baseURL: '/matchcat_order_page/',
+        // baseURL: '/matchcat_order_page/',
     },
-    ssr: false,
-    experimental: {
-        payloadExtraction: false
-    }
+
 })
