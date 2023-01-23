@@ -89,7 +89,8 @@
             </el-form-item>
             <!-- 提交订单 -->
             <el-form-item label-width="auto" v-show="showMsg">
-              <el-alert title="订单已生成，请您点击“复制”按钮，并发送给抹茶喵~" type="success" show-icon :closable=false />
+              <el-alert :title="globalData?.alert_copy_text || '订单已生成，请您点击“复制”按钮，并发送给抹茶喵~'" type="success" show-icon
+                :closable=false />
               <p id="generate"
                 style="line-break: anywhere; color: transparent; margin: 0; line-height: 20px; user-select: none;">{{
                   msg
@@ -195,13 +196,14 @@ const validateDate = (rule: any, value: Date, callback: any) => {
 
 const formRef = ref<FormInstance>()
 const submitForm = (formEl: FormInstance | undefined) => {
-  console.log(encodeMsg(data))
   if (!formEl) return
   formEl.validate((valid) => {
     if (!valid) {
       ElMessage({ message: '请检查订单信息', duration: 1000, type: 'error', grouping: true, })
       return false
     }
+    const result = encodeMsg(data)
+    console.log(result)
     ElMessage({ message: '订单已创建成功', duration: 1000, type: 'success', grouping: true, })
   })
 }
@@ -241,7 +243,6 @@ onMounted(() => {
   // 初始化复制功能
   new ClipboardJS('.copy')
 
-  console.log(global['data'])
   // 检测数据是否获取成功
   if ('/' != globalData.value?._path) {
     ElMessage({ message: 'globalData获取失败', duration: 1000, type: 'error', grouping: true, })

@@ -4,6 +4,7 @@ menu_text: "菜单 Menu"
 order_text: "填写订单信息 Fill In Info"
 contact_us_text: "联系我们 Contact Us"
 contact_detials_text: "微信号：matchacat812"
+alert_copy_text: "订单已生成，请您点击“复制”按钮，并发送给抹茶喵~"
 # type可用的类型为："success" | "warning" | "info" | "error"
 notifications:
   - text: "请确认您的订单，点击下方按钮提交订单。"
