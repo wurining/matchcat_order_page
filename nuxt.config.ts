@@ -18,4 +18,7 @@ export default defineNuxtConfig({
         baseURL: '/matchcat_order_page/',
     },
     ssr: false,
+    experimental: {
+        payloadExtraction: false
+    }
 })
