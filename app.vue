@@ -3,11 +3,11 @@
     <el-container class="main">
       <!-- 店铺简介 -->
       <el-main style="background-color: #fff; padding: 20px 20px 0">
-        <h1>Matcha Cat🐱 - The best Matcha, Xuemeiniang and Hezi!</h1>
+        <h1>{{ globalData?.name || "Matcha Cat🐱" }}</h1>
       </el-main>
       <!-- 菜单区域 -->
       <el-main>
-        <h2>菜单 Menu</h2>
+        <h2>{{ globalData?.menu_text || "菜单 Menu" }}</h2>
         <section>
           <template v-for="(item, index) in data" :key="index">
             <!-- 卡片 -->
@@ -27,28 +27,30 @@
                           <h3>{{ item?.title }} {{ item?.title_en }}</h3>
                           <!-- 产品描述 -->
                           <p>{{ item?.description }}</p>
-                          <!-- 配料选择 -->
-                          <el-checkbox-group v-model="checkList[index]" @change="handleCheckChange">
-                            <el-checkbox v-for="option in item?.options" :key="option.name" :label="option.name">+£{{
-                              option.price
-                            }} {{ option.name }}</el-checkbox>
-                          </el-checkbox-group>
                         </el-main>
                         <el-footer style="--el-footer-height: auto">
-                          <!-- 加一份 -->
-                          <el-button type="primary" @click="" style="width: 100%">
-                            <el-icon style="vertical-align: middle">
-                              <el-icon-plus />
-                            </el-icon>
-                          </el-button>
-                        </el-footer>
-                        <el-footer style="--el-footer-height: auto" v-show="false">
                           <!-- 品类数量 -->
-                          <el-alert :title="`最多可选${item.max}份`" type="info" show-icon style="margin: 10px 0"
+                          <el-alert :title="`最多可选${item.max}份`" type="warning" show-icon style="margin: 10px 0"
                             :closable=false />
-                          <el-input-number style="width: 100%;" v-model="num[index]" :min="0" :max="item.max"
-                            @change="handleChange" />
-                          <!-- 灰色小字提示 -->
+                          <el-row>
+                            <el-col :span="5">
+                              <!-- 加一份 -->
+                              <el-button type="primary" style="width: 80%" @click="() => addToBasket(index)">
+                                <el-icon><el-icon-plus /></el-icon>
+                              </el-button>
+                            </el-col>
+                            <el-col :span="5">
+                              <el-button type="primary" style="width: 80%" @click="() => removeFromBasket(index)">
+                                <el-icon><el-icon-minus /></el-icon>
+                              </el-button>
+                            </el-col>
+                            <el-col :span="14"
+                              style="text-align: center; font-size: 1.5em; vertical-align: baseline; font-weight: bold;">
+                              <span>× {{ num[index] }}</span>
+                            </el-col>
+                          </el-row>
+                          <!-- 限制数量 -->
+                          <el-input-number v-show="false" v-model="num[index]" :min="0" :max="item.max" />
                         </el-footer>
                       </el-container>
                     </el-col>
@@ -60,7 +62,7 @@
         </section>
       </el-main>
       <el-main>
-        <h2>订单信息 Order Info</h2>
+        <h2>{{ globalData?.order_text || "填写订单信息 Fill In Info" }}</h2>
         <section class="sumbit">
           <el-form ref="formRef" :model="validateForm" label-width="100px" class="demo-ruleForm">
             <!-- 下单提示 -->
@@ -73,8 +75,8 @@
                 maxlength="256" />
             </el-form-item>
             <!-- 填写电话 -->
-            <el-form-item prop="phone" label-width="auto">
-              <el-input v-model.string="validateForm.phone" placeholder="请输入电话（选填）" :clearable=true maxlength="14" />
+            <el-form-item prop="phone" label-width="auto" :rules="[{ required: true, message: '电话是必填项' }]">
+              <el-input v-model.string="validateForm.phone" placeholder="请输入电话" :clearable=true maxlength="14" />
             </el-form-item>
             <!-- 填写Postcode -->
             <el-form-item prop="postcode" label-width="auto" :rules="[{ required: true, message: 'Postcode是必填项' }]">
@@ -88,7 +90,11 @@
             <!-- 提交订单 -->
             <el-form-item label-width="auto" v-show="showMsg">
               <el-alert title="订单已生成，请您点击“复制”按钮，并发送给抹茶喵~" type="success" show-icon :closable=false />
-              <p id="generate" style="line-break: anywhere">{{ msg }}</p>
+              <p id="generate"
+                style="line-break: anywhere; color: transparent; margin: 0; line-height: 20px; user-select: none;">{{
+                  msg
+                }}
+              </p>
               <el-button type="success" style="width: 100%;" class="copy" data-clipboard-target="#generate"
                 @click="afterCopy">复制</el-button>
             </el-form-item>
@@ -100,12 +106,11 @@
         </section>
       </el-main>
       <!-- 联系我们 -->
-      <el-footer>
-        <h2>联系我们 Contact us</h2>
-        <p>Leeds, LS6 1BS</p>
+      <el-footer style="--el-footer-height:auto">
+        <h2>{{ globalData?.contact_us_text || "联系我们 Contact Us" }}</h2>
+        <p>{{ globalData?.contact_detials_text || "" }}</p>
       </el-footer>
     </el-container>
-    <!-- <div class="blur-bg"></div> -->
   </div>
 
 </template>
@@ -146,59 +151,58 @@ import type { FormInstance } from 'element-plus'
 import ClipboardJS from 'clipboard'
 
 
-const { data } = await useAsyncData('home', () => queryContent('/items').find())
+const global = await useAsyncData(() => queryContent('/').findOne())
+const { data } = await useAsyncData(() => queryContent('/items').find())
+const globalData = ref(global['data'])
 const num = ref(Array(data.value?.length).fill(0))
-const checkList = ref(data?.value?.map((item: any) => []))
 
 
-const handleCheckChange = (val: any) => {
-  console.log(val)
+/**
+ * 添加商品到购物车
+ * @param index 商品索引
+ */
+const addToBasket = (index: any) => {
+  num.value[index]++
 }
 
-const handleChange = (cur: number | undefined, prev: number | undefined) => {
-  console.log(cur)
+/**
+ * 从购物车中移除商品
+ * @param index 商品索引
+ */
+const removeFromBasket = (index: any) => {
+  num.value[index]--
 }
 
-const validateForm = reactive({
-  user: '',
-  phone: '',
-  postcode: '',
-  orderDate: '',
-})
+const validateForm = reactive({ user: '', phone: '', postcode: '', orderDate: '', })
 
-
+/**
+ * 校验订单时间是否在当前时间之后
+ * @param rule
+ * @param value
+ * @param callback
+ * @returns {any}
+ */
 const validateDate = (rule: any, value: Date, callback: any) => {
-  const t = new Date()
-  if (new Date(value).getTime() < new Date(t.getFullYear(), t.getMonth(), t.getDate()).getTime()) {
+  const today = new Date()
+  const isAfterToday = new Date(value).getTime() >= new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  if (!isAfterToday) {
     callback(new Error('请选择正确的订单时间'))
-  } else {
-    callback()
+    return
   }
+  callback()
 }
+
 
 const formRef = ref<FormInstance>()
 const submitForm = (formEl: FormInstance | undefined) => {
   console.log(encodeMsg(data))
   if (!formEl) return
   formEl.validate((valid) => {
-    if (valid) {
-      console.log('submit!')
-      ElMessage({
-        message: '提交成功',
-        duration: 1000,
-        type: 'success',
-        grouping: true,
-      })
-    } else {
-      console.log('error submit!')
-      ElMessage({
-        message: '提交失败',
-        duration: 1000,
-        type: 'error',
-        grouping: true,
-      })
+    if (!valid) {
+      ElMessage({ message: '请检查订单信息', duration: 1000, type: 'error', grouping: true, })
       return false
     }
+    ElMessage({ message: '订单已创建成功', duration: 1000, type: 'success', grouping: true, })
   })
 }
 
@@ -217,7 +221,6 @@ const encodeMsg = (data: any) => {
         price: item.price,
         quantity: num.value[index],
         total: item.price * num.value[index],
-        options: checkList.value[index]
       }
     }),
     total: 0
@@ -232,18 +235,22 @@ const encodeMsg = (data: any) => {
   return dataBody
 }
 
-const afterCopy = () => {
-  ElMessage({
-    message: '复制成功',
-    duration: 1000,
-    type: 'success',
-    grouping: true,
-  })
-}
+const afterCopy = () => { ElMessage({ message: '复制成功', duration: 1000, type: 'success', grouping: true, }) }
 
-// 生命周期钩子
 onMounted(() => {
-  new ClipboardJS('.copy');
+  // 初始化复制功能
+  new ClipboardJS('.copy')
+
+  console.log(global['data'])
+  // 检测数据是否获取成功
+  if ('/' != globalData.value?._path) {
+    ElMessage({ message: 'globalData获取失败', duration: 1000, type: 'error', grouping: true, })
+  }
+  data.value?.forEach((item: any) => {
+    if ('items' != item._dir) {
+      ElMessage({ message: 'items获取失败', duration: 1000, type: 'error', grouping: true, })
+    }
+  })
 })
 
 </script>
