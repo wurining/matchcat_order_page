@@ -124,19 +124,6 @@
   position: relative;
 }
 
-.blur-bg {
-  background: url('/img/matcha.jpg') no-repeat center center;
-  background-size: cover;
-  filter: blur(10px);
-  /* make background dim */
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  z-index: -1;
-}
-
 .main {
   background-color: #fff;
 }
