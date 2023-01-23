@@ -16,7 +16,6 @@ export default defineNuxtConfig({
             "noscript": []
         },
         baseURL: '/matchcat_order_page/',
-    }
-
-
+    },
+    ssr: false,
 })
