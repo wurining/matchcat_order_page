@@ -2,7 +2,8 @@
 export default defineNuxtConfig({
     ssr: false,
     nitro: {
-        preset: 'service-worker'
+        preset: 'service-worker',
+
     },
     experimental: {
         payloadExtraction: false
