@@ -17,7 +17,8 @@
                   <el-row :gutter="40">
                     <!-- 配图 -->
                     <el-col :sm="12" :xs="24">
-                      <el-image style=" border-radius: 5px; height: 100%;" :src="item?.src" fit="cover"></el-image>
+                      <el-image style=" border-radius: 5px; height: 100%;" :src="baseURL + item?.src"
+                        fit="cover"></el-image>
                     </el-col>
                     <!-- 详情 -->
                     <el-col :sm="12" :xs="24">
@@ -226,6 +227,8 @@ const encodeMsg = (data: any) => {
 
 const afterCopy = () => { ElMessage({ message: '复制成功', duration: 1000, type: 'success', grouping: true, }) }
 
+const baseURL = ref(useRuntimeConfig().app.baseURL)
+
 onMounted(() => {
   // 初始化复制功能
   new ClipboardJS('.copy')
@@ -239,6 +242,11 @@ onMounted(() => {
       ElMessage({ message: 'items获取失败', duration: 1000, type: 'error', grouping: true, })
     }
   })
+
+
+
+  console.log(baseURL)
+
 })
 
 </script>
