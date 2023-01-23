@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     ssr: false,
+    nitro: {
+        preset: 'service-worker'
+    },
     experimental: {
         payloadExtraction: false
     },
@@ -19,7 +22,6 @@ export default defineNuxtConfig({
             "script": [],
             "noscript": []
         },
-        // baseURL: '/matchcat_order_page/',
+        baseURL: '/matchcat_order_page/',
     },
-
 })
