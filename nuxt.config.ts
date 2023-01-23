@@ -15,7 +15,7 @@ export default defineNuxtConfig({
             "script": [],
             "noscript": []
         },
-
+        baseURL: 'https://wurining.github.io/matchcat_order_page/',
     }
 
 })
