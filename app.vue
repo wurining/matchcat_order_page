@@ -227,8 +227,13 @@ const encodeMsg = (data: any) => {
 
 const afterCopy = () => { ElMessage({ message: '复制成功', duration: 1000, type: 'success', grouping: true, }) }
 
-// window.location.origin baseURL
-const baseURL = ref(`${window.location.origin}${useRuntimeConfig().app.baseURL}`)
+let baseURL = ref('')
+if (typeof window !== "undefined") {
+  // browser code
+  // window.location.origin baseURL
+  baseURL = ref(`${window.location.origin}${useRuntimeConfig().app.baseURL}`)
+}
+
 
 onMounted(() => {
   // 初始化复制功能
