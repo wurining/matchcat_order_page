@@ -1,9 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     // ssr: false,
-    // nitro: {
-    //     preset: 'service-worker',
-    // },
+    nitro: {
+        // preset: 'service-worker',
+        // preset: 'netlify-edge',
+    },
     experimental: {
         payloadExtraction: false
     },
@@ -13,8 +14,8 @@ export default defineNuxtConfig({
     ],
     app: {
         head: {
+            title: 'Matcha Cat🐱',
             meta: [
-                { name: 'title', content: 'Matcha Cat🐱' },
                 { name: 'viewport', content: 'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover' },
                 { property: 'og:type', content: 'website' },
                 { property: 'og:title', content: 'Matcha Cat🐱' },
@@ -22,10 +23,12 @@ export default defineNuxtConfig({
                 { property: 'og:image', content: 'http://matchacat.wurining.com/logo.jpeg' },
                 { property: 'og:url', content: 'http://matchacat.wurining.com/' },
             ],
-            "link": [],
+            "link": [
+                { rel: 'icon', href: 'http://matchacat.wurining.com/logo.jpeg' },
+            ],
             "style": [],
             "script": [],
-            "noscript": []
+            "noscript": [],
         },
         // baseURL: '/matchcat_order_page/',
         baseURL: '/',

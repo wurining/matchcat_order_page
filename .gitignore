@@ -9,3 +9,7 @@ dist
 yarn.lock
 **/.DS_Store
 package-lock.json
+
+# Local Netlify folder
+.netlify
+netlify

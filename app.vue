@@ -83,6 +83,10 @@
             <el-form-item prop="postcode" label-width="auto" :rules="[{ required: true, message: 'Postcode是必填项' }]">
               <el-input v-model="validateForm.postcode" placeholder="请输入您的Postcode" :clearable=true maxlength="7" />
             </el-form-item>
+            <!-- 填写具体地址 -->
+            <el-form-item prop="address" label-width="auto" :rules="[{ required: true, message: '地址是必填项' }]">
+              <el-input v-model="validateForm.address" placeholder="请输入您的地址" :clearable=true maxlength="300" />
+            </el-form-item>
             <!-- 填写订单时间 -->
             <el-form-item prop="orderDate" label-width="auto" :rules="[{ required: true, message: '订单时间是必填项', type: 'date' },
             { message: '订单时间不能早于今天', type: 'date', validator: validateDate }]">
@@ -92,11 +96,7 @@
             <el-form-item label-width="auto" v-show="showMsg">
               <el-alert :title="globalData?.alert_copy_text || '订单已生成，请您点击“复制”按钮，并发送给抹茶喵~'" type="success" show-icon
                 :closable=false />
-              <p id="generate"
-                style="line-break: anywhere; color: transparent; margin: 0; line-height: 20px; user-select: none;">{{
-                  msg
-                }}
-              </p>
+              <p id="generate" style="line-break: anywhere; user-select:auto;">{{ msg }} </p>
               <el-button type="success" style="width: 100%;" class="copy" data-clipboard-target="#generate"
                 @click="afterCopy">复制</el-button>
             </el-form-item>
@@ -162,7 +162,7 @@ const removeFromBasket = (index: any) => {
   num.value[index]--
 }
 
-const validateForm = reactive({ user: '', phone: '', postcode: '', orderDate: '', })
+const validateForm = reactive({ user: '', phone: '', postcode: '', orderDate: '', address: '' })
 
 /**
  * 校验订单时间是否在当前时间之后
@@ -204,6 +204,7 @@ const encodeMsg = (data: any) => {
     user: validateForm.user,
     phone: validateForm.phone,
     postcode: validateForm.postcode,
+    address: validateForm.address,
     orderDate: validateForm.orderDate,
     orderDetails: data?.value?.map((item: any, index: number) => {
       return {
@@ -236,9 +237,6 @@ if (typeof window !== "undefined") {
 
 
 onMounted(() => {
-  // 初始化复制功能
-  new ClipboardJS('.copy')
-
   // 检测数据是否获取成功
   if ('/' != globalData.value?._path) {
     ElMessage({ message: 'globalData获取失败', duration: 1000, type: 'error', grouping: true, })
@@ -248,11 +246,8 @@ onMounted(() => {
       ElMessage({ message: 'items获取失败', duration: 1000, type: 'error', grouping: true, })
     }
   })
-
-
-
-  console.log(baseURL)
-
+  // 初始化复制功能
+  new ClipboardJS('.copy')
 })
 
 </script>
