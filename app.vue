@@ -16,9 +16,10 @@
                 <el-card class="box-card" shadow="hover">
                   <el-row :gutter="40">
                     <!-- 配图 -->
-                    <el-col :sm="12" :xs="24">
-                      <el-image style=" border-radius: 5px; height: 100%;" :src="`${baseURL}${item?.src}`"
-                        fit="cover"></el-image>
+                    <el-col :sm="12" :xs="24" style="position:relative">
+                      <el-image style=" border-radius: 5px; width: 100%; height: 100%; max-height: 20em;"
+                        :src="`${baseURL}${item?.src}`" fit="contain"></el-image>
+                      <!-- "fill" | "none" | "contain" | "cover" | "scale-down" -->
                     </el-col>
                     <!-- 详情 -->
                     <el-col :sm="12" :xs="24">
